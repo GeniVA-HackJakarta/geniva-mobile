@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "geniva",
-    "slug": "geniva",
-    "scheme": "gen",
+    "name": "Grab",
+    "slug": "Grab",
+    "scheme": "Grab",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
