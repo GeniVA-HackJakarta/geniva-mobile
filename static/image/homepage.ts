@@ -30,6 +30,7 @@ const HOMEPAGE_IMAGES = {
   grabExpress1: require("@/assets/homepage/grab-express-1.png"),
   grabExpress2: require("@/assets/homepage/grab-express-2.png"),
   questionMark: require("@/assets/homepage/question-mark.png"),
+  paper: require("@/assets/homepage/paper.png"),
 };
 
 export default HOMEPAGE_IMAGES;

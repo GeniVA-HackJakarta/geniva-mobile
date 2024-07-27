@@ -26,7 +26,17 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["@react-native-voice/voice", "expo-router", "expo-font"],
+    "plugins": [
+      "@react-native-voice/voice",
+      "expo-router",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "b6de298c-a5e2-4bc5-b86a-b29421222bbf"

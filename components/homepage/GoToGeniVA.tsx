@@ -1,6 +1,7 @@
 import { View, Text, Pressable, Image } from "react-native";
 import React from "react";
 import HOMEPAGE_IMAGES from "@/static/image/homepage";
+import { router } from "expo-router";
 
 interface GoToGeniVAProps {}
 
@@ -16,6 +17,7 @@ const GoToGeniVA: React.FC<GoToGeniVAProps> = () => {
         <Pressable
           className="w-full bg-[#00B14F] py-3 px-3 flex-row items-center"
           android_ripple={{ color: "#00802D" }}
+          onPress={() => router.push("/chatbot")}
         >
           <Image
             source={HOMEPAGE_IMAGES.questionMark}
