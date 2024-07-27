@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#00b14f"
     },
     "ios": {
       "supportsTablet": true
@@ -21,18 +21,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.timothysubekti0322.Grab",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "@react-native-voice/voice",
-      "expo-router",
-      "expo-font"
-    ],
+    "plugins": ["@react-native-voice/voice", "expo-router", "expo-font"],
     "extra": {
       "eas": {
         "projectId": "b6de298c-a5e2-4bc5-b86a-b29421222bbf"
