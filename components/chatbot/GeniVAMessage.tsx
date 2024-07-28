@@ -33,7 +33,9 @@ const GeniVAMessage: React.FC<GeniVAMessageProps> = ({
   data,
 }) => {
   const [recomendationVisible, setRecomendationVisible] = React.useState(false);
-  console.log(data);
+  console.log("Data in genivaMessage: ", data);
+  console.log("newResponse in genivaMessage: ", newResponse);
+  console.log("description in genivaMessage: ", description);
   return (
     <View
       className={`${
@@ -52,17 +54,23 @@ const GeniVAMessage: React.FC<GeniVAMessageProps> = ({
             {data && data.type == "menu_makanan"
               ? data.description
               : "Berikut saran untuk anda"}
+            {data &&
+              (data.type == "promotion" ||
+                data.type == "common_conversation") &&
+              data.description}
           </TypeWriter>
-          {recomendation.map((item, index) => (
-            <Recomendation
-              visible={recomendationVisible}
-              key={index}
-              index={index}
-              menu={item.menu}
-              price={item.price}
-              data={data}
-            />
-          ))}
+          {data.type == "menu_makanan" ||
+            (data.type == "transportation" &&
+              recomendation.map((item, index) => (
+                <Recomendation
+                  visible={recomendationVisible}
+                  key={index}
+                  index={index}
+                  menu={item.menu}
+                  price={item.price}
+                  data={data}
+                />
+              )))}
         </>
       ) : (
         <>

@@ -31,6 +31,18 @@ const Recomendation: React.FC<RecomendationProps> = ({
           {index + 1}. {menu} {price}
         </Text>
       )}
+      {data.type == "transportation" &&
+        data.grabRide?.map((item, index) => {
+          return (
+            <View className="flex-row items-center">
+              <Text className="text-2xl font bold text-white">·</Text>
+              <Text className="ml-2 text-white">
+                Naik {item.type} dengan jarak {item.total_disctance} dalam waktu
+                {item.total_duration} sebesar IDR{item.price}
+              </Text>
+            </View>
+          );
+        })}
       <View className="bg-white px-2 py-1 rounded-full self-end mt-4">
         <Text className="self-start">Total: {price}</Text>
       </View>
