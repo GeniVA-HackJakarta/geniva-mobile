@@ -138,6 +138,10 @@ const index: React.FC<indexProps> = () => {
           }
           updatedConversations[updatedConversations.length - 1].data =
             response.data;
+          updatedConversations[updatedConversations.length - 1].description =
+            response.data.description
+              ? response.data.description
+              : "Berikut saran untuk anda";
           return updatedConversations;
         });
       }
