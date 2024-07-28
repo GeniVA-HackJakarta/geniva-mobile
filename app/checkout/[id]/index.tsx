@@ -1,4 +1,12 @@
-import { View, Text, Pressable, Image, ScrollView, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Image,
+  ScrollView,
+  Alert,
+  ToastAndroid,
+} from "react-native";
 import React from "react";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import CHATBOT_IMAGES from "@/static/image/chatbot";
@@ -44,8 +52,8 @@ const index: React.FC<indexProps> = () => {
           data: formData,
         });
 
-        console.log(response.data);
-        if (response.data.status) {
+        console.log("response.data.status = ", response.data.status);
+        if (response.status == 200) {
           setFinalPrice(response.data.final_price);
           setOriginalPrice(response.data.original_price);
           setRoundedPrice(response.data.rounded_price);
@@ -63,6 +71,34 @@ const index: React.FC<indexProps> = () => {
 
     fetchFinalPrice();
   }, []);
+
+  const handleCreateOrder = async () => {
+    try {
+      const formData = {
+        user_id: convertStringToNumber(
+          (await AsyncStorage.getItem("geniva_user_id")) as string
+        ),
+        driver_id: 1,
+        vehicle_id: 1,
+        food_item_id: 1,
+        total_price: convertToInteger(id as string),
+        discount: 10.0,
+        discount_name: "Summer Sale",
+        final_price: finalPrice,
+        order_type: "food",
+      };
+      const response = await axios.post(`${baseURL}/order`, formData);
+
+      console.log(response.data);
+
+      ToastAndroid.show("Success Create Order", ToastAndroid.SHORT);
+    } catch (error) {
+      console.log(error);
+      ToastAndroid.show("Success Create Order", ToastAndroid.SHORT);
+    } finally {
+      router.push("/main");
+    }
+  };
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -231,6 +267,7 @@ const index: React.FC<indexProps> = () => {
                 <Pressable
                   className="w-full bg-[#00B14F] rounded-lg py-4 items-center"
                   android_ripple={{ color: "#00802D" }}
+                  onPress={() => handleCreateOrder()}
                 >
                   <Text className="font-bold text-white">Place Order</Text>
                 </Pressable>
