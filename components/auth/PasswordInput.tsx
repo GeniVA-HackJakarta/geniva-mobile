@@ -5,6 +5,7 @@ import { Icon } from "react-native-paper";
 interface PasswordInputProps {
   title: string;
   value: string;
+  placeholder: string;
   handleValue: (value: string) => void;
   valueError: string;
   showPassword: boolean;
@@ -14,6 +15,7 @@ interface PasswordInputProps {
 const PasswordInput: React.FC<PasswordInputProps> = ({
   title,
   value,
+  placeholder,
   handleValue,
   valueError,
   showPassword,
@@ -29,7 +31,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
           className={`${
             valueError !== "" ? "border-red-500 border-[1px]" : ""
           } w-full bg-[#EDEDED] px-4 py-3 rounded-lg mt-3`}
-          placeholder="Masukan nomor handphone"
+          placeholder={placeholder}
           value={value}
           onChangeText={(text) => handleValue(text)}
           secureTextEntry={!showPassword}

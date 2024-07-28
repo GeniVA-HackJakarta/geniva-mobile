@@ -16,6 +16,10 @@ import InitialGeniVATemplate from "@/components/chatbot/InitialGeniVATemplate";
 import UserMessage from "@/components/chatbot/UserMessage";
 import * as ImagePicker from "expo-image-picker";
 import GeniVAMessage from "@/components/chatbot/GeniVAMessage";
+import axios from "axios";
+import baseURL from "@/static/api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from "expo-location";
 
 interface conversation {
   sender: string; // geniva | user
@@ -23,6 +27,7 @@ interface conversation {
   image: string;
   description: string;
   loading: boolean;
+  data?: FoodMenus | TransportMenus;
 }
 
 interface indexProps {}
@@ -37,6 +42,25 @@ const index: React.FC<indexProps> = () => {
   const [conversations, setConversations] = React.useState<conversation[]>([]);
 
   const [loading, setLoading] = React.useState<boolean>(false);
+
+  const [location, setLocation] = React.useState<any>(null);
+  const [errorMsg, setErrorMsg] = React.useState<null | string>(null);
+
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    console.log(location);
+    setLocation(location);
+  };
+
+  React.useEffect(() => {
+    getLocation();
+  }, []);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -57,14 +81,10 @@ const index: React.FC<indexProps> = () => {
 
   const handleSend = async () => {
     setLoading(true);
-    const formData = new FormData();
+    const formData: any = {};
     let newConversationItems = [];
     if (newImage !== "") {
-      formData.append("file", {
-        uri: newImage,
-        type: "image/jpeg",
-        name: "photo.jpg",
-      } as any);
+      formData.image = newImage;
 
       newConversationItems.push({
         sender: "user",
@@ -75,7 +95,7 @@ const index: React.FC<indexProps> = () => {
       });
     }
     if (newMessages !== "") {
-      formData.append("query", newMessages);
+      formData.input_string = newMessages;
       newConversationItems.push({
         sender: "user",
         message: newMessages,
@@ -97,19 +117,32 @@ const index: React.FC<indexProps> = () => {
       },
     ]);
     try {
-      setTimeout(() => {
+      // console.log("location =", location);
+      formData.lat = location.coords.latitude;
+      formData.lon = location.coords.longitude;
+      const userID = await AsyncStorage.getItem("geniva_user_id");
+      // console.log("userID = ", userID);
+      console.log("FormData = ", formData);
+      const path = `${baseURL}/ai/${userID}`;
+      console.log("path = ", path);
+      const response = await axios.post(`${baseURL}/ai/${userID}`, formData, {
+        timeout: 20000,
+      });
+      console.log("response.data = ", response.data);
+      if (response.data.success) {
         setConversations((prevConversations) => {
           const updatedConversations = [...prevConversations];
           if (updatedConversations.length > 0) {
-            updatedConversations[updatedConversations.length - 1].description =
-              "Halo kak, sebentar GeniVA akan membantu melegakan";
             updatedConversations[updatedConversations.length - 1].loading =
               false;
           }
+          updatedConversations[updatedConversations.length - 1].data =
+            response.data;
           return updatedConversations;
         });
-      }, 3000);
+      }
     } catch (error) {
+      console.log(error as any);
       Alert.alert("Error", "Error while sending message");
     } finally {
       setLoading(false);
@@ -117,8 +150,6 @@ const index: React.FC<indexProps> = () => {
       setNewImage("");
     }
   };
-
-  console.log(conversations);
 
   return (
     <>
@@ -152,6 +183,7 @@ const index: React.FC<indexProps> = () => {
                   loading={conversation.loading}
                   newResponse={index === conversations.length - 1}
                   description={conversation.description}
+                  data={conversation.data as FoodMenus | TransportMenus}
                 />
               );
             }

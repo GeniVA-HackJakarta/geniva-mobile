@@ -5,6 +5,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  Alert,
+  ToastAndroid,
 } from "react-native";
 import React from "react";
 import { Link, router, Stack } from "expo-router";
@@ -13,7 +15,9 @@ import RegularInput from "@/components/auth/RegularInput";
 import FormInput from "@/components/auth/FormInput";
 import FormPasswordInput from "@/components/auth/FormPasswordInput";
 import { confirmPasswordMatch, emailValidator } from "@/utils/formValidator";
-import { Checkbox } from "react-native-paper";
+import { ActivityIndicator, Checkbox } from "react-native-paper";
+import axios from "axios";
+import baseURL from "@/static/api/api";
 
 interface indexProps {}
 
@@ -65,6 +69,8 @@ const index: React.FC<indexProps> = () => {
 
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
+  const [loading, setLoading] = React.useState(false);
+
   const handleSetShowConfirmPassword = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
@@ -100,7 +106,7 @@ const index: React.FC<indexProps> = () => {
     }
   };
 
-  // Handle Login
+  // Handle Register
   const handleRegister = async () => {
     if (!emailValidator(form.email)) {
       setFormErrors((prevErr) => ({
@@ -113,9 +119,26 @@ const index: React.FC<indexProps> = () => {
         confirmPassword: "Password tidak sama",
       }));
     } else {
+      const formData = {
+        name: form.name,
+        email: form.email,
+        phone_number: form.handphone,
+        password: form.password,
+      };
       try {
-        router.push("/");
-      } catch (error) {}
+        setLoading(true);
+        const response = await axios.post(`${baseURL}/auth/register`, formData);
+        console.log(response.data);
+        if (response.status == 201) {
+          ToastAndroid.show("Register Success", ToastAndroid.SHORT);
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error);
+        Alert.alert("Error", error as string);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -194,9 +217,13 @@ const index: React.FC<indexProps> = () => {
                 disabled={!isValid}
                 onPress={() => handleRegister()}
               >
-                <Text className="text-white text-center text-base font-semibold">
-                  Register
-                </Text>
+                {loading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text className="text-white text-center text-base font-semibold">
+                    Register
+                  </Text>
+                )}
               </Pressable>
             </View>
             <View className="w-full flex-row justify-center items-center mt-4">

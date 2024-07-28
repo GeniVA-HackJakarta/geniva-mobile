@@ -1,4 +1,11 @@
-import { View, Text, Pressable, Image } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Image,
+  Alert,
+  ToastAndroid,
+} from "react-native";
 import React, { useContext } from "react";
 import { KYCContext } from "@/store/context/kycContext";
 import { Link, router, Stack } from "expo-router";
@@ -7,6 +14,10 @@ import HeaderKYC from "@/components/kyc/HeaderKYC";
 import { RadioButton } from "react-native-paper";
 import RadioButtonItem from "@/components/kyc/RadioButtonItem";
 import { QUESTION_4 } from "@/static/data/kycQuestion";
+import axios from "axios";
+import baseURL from "@/static/api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { transformKYC } from "@/utils/stringFormatter";
 
 interface question4Props {}
 
@@ -18,8 +29,37 @@ const question4: React.FC<question4Props> = () => {
     setValue(value);
   };
 
-  const handleSubmit = () => {
-    router.push("/main");
+  const handleSubmit = async () => {
+    if (value == "") {
+      Alert.alert("Error", "Please select an answer");
+    } else {
+      const userID = await AsyncStorage.getItem("geniva_user_id");
+      const token = await AsyncStorage.getItem("geniva_user_token");
+      console.log(userID);
+      try {
+        const response = await axios.put(
+          `${baseURL}/user/${userID}/kyc`,
+          {
+            saving: transformKYC(value),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log(response.data);
+
+        if (response.data.success) {
+          ToastAndroid.show("Data saved", ToastAndroid.SHORT);
+          router.push("/main");
+        }
+      } catch (error) {
+        console.log(error);
+        Alert.alert("Error", "Something went wrong");
+      }
+    }
   };
   return (
     <>

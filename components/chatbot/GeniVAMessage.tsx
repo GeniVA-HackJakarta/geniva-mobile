@@ -23,14 +23,17 @@ interface GeniVAMessageProps {
   loading: boolean;
   newResponse: boolean;
   description: string;
+  data: FoodMenus | TransportMenus;
 }
 
 const GeniVAMessage: React.FC<GeniVAMessageProps> = ({
   loading,
   newResponse,
   description,
+  data,
 }) => {
   const [recomendationVisible, setRecomendationVisible] = React.useState(false);
+  console.log(data);
   return (
     <View
       className={`${
@@ -46,7 +49,9 @@ const GeniVAMessage: React.FC<GeniVAMessageProps> = ({
             onTypingEnd={() => setRecomendationVisible(true)}
             style={{ fontFamily: "MulishMedium" }}
           >
-            Halo kak, sebentar GeniVA akan membantu melegakan
+            {data && data.type == "menu_makanan"
+              ? data.description
+              : "Berikut saran untuk anda"}
           </TypeWriter>
           {recomendation.map((item, index) => (
             <Recomendation
@@ -55,6 +60,7 @@ const GeniVAMessage: React.FC<GeniVAMessageProps> = ({
               index={index}
               menu={item.menu}
               price={item.price}
+              data={data}
             />
           ))}
         </>
@@ -70,6 +76,7 @@ const GeniVAMessage: React.FC<GeniVAMessageProps> = ({
               index={index}
               menu={item.menu}
               price={item.price}
+              data={data}
             />
           ))}
         </>

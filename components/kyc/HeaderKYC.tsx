@@ -25,7 +25,7 @@ const HeaderKYC: React.FC<HeaderKYCProps> = ({ page }) => {
         <Text className="text-base font-semibold">Cek Profil Tabungan</Text>
         <Text className="text-sm">Tingkat Pembulatan Transaksi</Text>
       </View>
-      <Pressable>
+      <Pressable onPress={() => router.push("/main")}>
         <Icon source="close" size={36} />
       </Pressable>
     </View>
